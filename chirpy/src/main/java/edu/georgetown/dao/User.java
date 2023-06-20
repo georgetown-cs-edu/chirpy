@@ -4,7 +4,7 @@
  * Micah Sherr <msherr@cs.georgetown.edu>
  */
 
-package edu.georgetown.chirpy.dev.src.main.java.edu.georgetown.chirpy.dao;
+package chirpy.src.main.java.edu.georgetown.dao;
 
 import java.io.Serializable;
 import java.util.Vector;

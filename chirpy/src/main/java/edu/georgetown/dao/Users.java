@@ -1,4 +1,4 @@
-package edu.georgetown.chirpy.dev.src.main.java.edu.georgetown.chirpy.dao;
+package chirpy.src.main.java.edu.georgetown.dao;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +36,7 @@ public class Users {
         try {
             FileInputStream fileIn = new FileInputStream(USERS_SERIALIZED_FILE_PATH);
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            this.users = (Vector<User>) in.readObject();
+            this.users = (Vector<User>)in.readObject();
             in.close();
             fileIn.close();
         } catch (IOException i) {

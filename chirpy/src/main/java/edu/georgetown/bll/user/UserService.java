@@ -1,19 +1,14 @@
-package edu.georgetown.chirpy.dev.src.main.java.edu.georgetown.chirpy.bll.user;
+package chirpy.src.main.java.edu.georgetown.bll.user;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.logging.Logger;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-
-import edu.georgetown.chirpy.dev.src.main.java.edu.georgetown.chirpy.dao.*;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import chirpy.src.main.java.edu.georgetown.dao.*;
 
 
 public class UserService {
@@ -49,6 +44,7 @@ public class UserService {
 
             InputStream requestBody = exchange.getRequestBody();
 
+            /* 
             try {
                 // Create a JsonReader to read the JSON data
                 JsonReader reader = Json.createReader(requestBody);
@@ -87,6 +83,7 @@ public class UserService {
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
             os.close();
+            */
         }
     }
 

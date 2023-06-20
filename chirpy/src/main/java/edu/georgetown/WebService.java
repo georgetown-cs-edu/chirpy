@@ -1,4 +1,4 @@
-package edu.georgetown.chirpy.dev.src.main.java.edu.georgetown.chirpy;
+package chirpy.src.main.java.edu.georgetown;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;
@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import edu.georgetown.chirpy.dev.src.main.java.edu.georgetown.chirpy.bll.user.UserService;
+import chirpy.src.main.java.edu.georgetown.bll.user.UserService;
 
 
 public class WebService {
