@@ -6,7 +6,10 @@
 
 package edu.georgetown.chirpy.dao;
 
-public class User {
+import java.io.Serializable;
+import java.util.Vector;
+
+public class User implements Serializable {
     
     private String username;
     private String name;
@@ -39,11 +42,11 @@ public class User {
     }
 
     public void addFollower( User follower ) {
-        Users.getLogger().debug( "Adding follower " + follower.getUsername() + " to " + this.getUsername() );
+        Users.getLogger().info( "Adding follower " + follower.getUsername() + " to " + this.getUsername() );
         this.followers.add( follower );
     }
 
-    public void getFollowers() {
+    public Vector<User> getFollowers() {
         return this.followers;
     }
 

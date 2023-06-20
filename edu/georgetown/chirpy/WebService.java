@@ -27,8 +27,6 @@ class WebService {
         logger.info("Starting chirpy web service");
         
         UserService UserService = new UserService(logger);
-
-
     }
 
 }

@@ -1,5 +1,6 @@
+package edu.georgetown.chirpy.dao;
 
-
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,10 +12,16 @@ import java.util.logging.Logger;
 public class Users {
     protected static Logger logger;
     private Vector<User> users;
+    private static final String USERS_SERIALIZED_FILE_PATH = "/tmp/users.ser";
 
-    public Users( Logger log) {
+    public Users(Logger log) {
         logger = log;
         this.users = new Vector<User>();
+        File f = new File(USERS_SERIALIZED_FILE_PATH);
+        if (!f.exists()) {
+            saveUsers();
+        }
+
     }
 
     public static Logger getLogger() {
@@ -27,16 +34,19 @@ public class Users {
 
     public void ReadUsers() {
         try {
-            FileInputStream fileIn = new FileOutputStream("/tmp/users.ser");
+            FileInputStream fileIn = new FileInputStream(USERS_SERIALIZED_FILE_PATH);
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            this.users = in.readObject();
+            this.users = (Vector<User>) in.readObject();
             in.close();
             fileIn.close();
         } catch (IOException i) {
             i.printStackTrace();
             throw new RuntimeException("Could not read users");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not read users");
         }
-        logger.debug("Read " + this.users.size() + " users");
+        logger.info("Read " + this.users.size() + " users");
     }
 
     /**
@@ -44,7 +54,7 @@ public class Users {
      */
     public void saveUsers() {
         try {
-            FileOutputStream fileOut = new FileOutputStream("/tmp/users.ser");
+            FileOutputStream fileOut = new FileOutputStream(USERS_SERIALIZED_FILE_PATH);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(users);
             out.close();
@@ -53,6 +63,6 @@ public class Users {
             i.printStackTrace();
             throw new RuntimeException("Could not save users");
         }
-        logger.debug("Saved " + this.users.size() + " users");
+        logger.info("Saved " + this.users.size() + " users");
     }
 }
