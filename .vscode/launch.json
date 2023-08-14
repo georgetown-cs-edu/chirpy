@@ -14,8 +14,8 @@
             "type": "java",
             "name": "WebService",
             "request": "launch",
-            "mainClass": "edu.georgetown.chirpy.WebService",
-            "projectName": "chirpy_c34fdb39"
+            "mainClass": "edu.georgetown.WebService",
+            "projectName": "chirpy"
         }
     ]
 }
