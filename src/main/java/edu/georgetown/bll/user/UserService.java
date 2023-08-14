@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import edu.georgetown.dao.*;
-
+import edu.georgetown.dao.User;
+import edu.georgetown.dao.Users;
 
 public class UserService {
 
