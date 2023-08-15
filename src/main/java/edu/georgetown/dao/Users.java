@@ -32,7 +32,7 @@ public class Users {
         this.users.add(user);
     }
 
-    public void ReadUsers() {
+    public void readUsers() {
         try {
             FileInputStream fileIn = new FileInputStream(USERS_SERIALIZED_FILE_PATH);
             ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -64,5 +64,9 @@ public class Users {
             throw new RuntimeException("Could not save users");
         }
         logger.info("Saved " + this.users.size() + " users");
+    }
+
+    public Vector<User> getUsers() {
+        return users;
     }
 }

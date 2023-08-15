@@ -23,7 +23,7 @@ public class WebService {
         }
         ConsoleHandler consoleHandler = new ConsoleHandler();
         logger.addHandler(consoleHandler);
-        // logger.setUseParentHandlers(false); // Remove default handlers
+        logger.setUseParentHandlers(false); // Remove default handlers
         logger.setLevel(Level.ALL); // Set desired log level (e.g., Level.INFO, Level.WARNING, etc.)
 
         logger.info("Starting chirpy web service");
