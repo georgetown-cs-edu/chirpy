@@ -21,7 +21,6 @@ public class Users {
         if (!f.exists()) {
             saveUsers();
         }
-
     }
 
     public static Logger getLogger() {

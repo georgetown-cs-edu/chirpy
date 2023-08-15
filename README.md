@@ -2,6 +2,9 @@
 
 A webservice that's totally not Twitter.
 
+It's divided into business logic layer (BLL) and data access object (dao) components.
+
+
 ## Some helpful curl commands
 
 To create a user:
