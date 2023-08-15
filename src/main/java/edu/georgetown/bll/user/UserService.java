@@ -29,6 +29,10 @@ public class UserService {
         users.readUsers();
     }
 
+    public Users getUsers() {
+        return users;
+    }
+
     static public class NewUserHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {

@@ -7,9 +7,8 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
 import com.sun.net.httpserver.HttpServer;
-
+import edu.georgetown.bll.user.AuthService;
 import edu.georgetown.bll.user.UserService;
 
 public class WebService {
@@ -39,15 +38,16 @@ public class WebService {
 
         WebService ws = new WebService();
         UserService userService = new UserService(ws.logger);
-        ws.startService(userService);
-
+        new AuthService(ws.logger, userService.getUsers());
+        ws.startService();
     }
 
-    private void startService(UserService userService) {
+    private void startService() {
         try {
             HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
             server.createContext("/newuser/", new UserService.NewUserHandler());
             server.createContext("/listusers/", new UserService.ListUserHandler());
+            server.createContext("/login/", new AuthService.NewLoginHandler());
             server.setExecutor(null); // Use the default executor
             server.start();
         } catch (IOException e) {
