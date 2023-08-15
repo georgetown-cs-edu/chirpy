@@ -48,6 +48,7 @@ public class UserService {
                 String name = (String) jo.get("name");
                 User user = new User(username, name, password);
                 users.addUser(user);
+                logger.info("new user created: " + username );
 
             } catch (Exception e) {
                 logger.warning("Invalid JSON data received: " + e.getStackTrace());

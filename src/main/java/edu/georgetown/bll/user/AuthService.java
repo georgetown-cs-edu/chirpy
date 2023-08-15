@@ -37,6 +37,14 @@ public class AuthService {
         return false; // no such user
     }
 
+    public boolean checkCookie( String cookieString, String username ) {
+        Cookie cookie = cookieStore.get(username);
+        if (cookie == null) {
+            return false;
+        }
+        return cookie.toString().equals(cookieString);
+    }
+
     static public class NewLoginHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -64,22 +72,24 @@ public class AuthService {
             String response;
             // if the password is correct, create a new cookie, store it, and return it
             if (checkPassword(username, password)) {
-                logger.info( "successful login from " + username );
+                logger.info("successful login from " + username);
                 Cookie c = new Cookie();
                 cookieStore.put(username, c);
                 // Send the response
-                response = c.toString();
-                exchange.sendResponseHeaders(200, response.getBytes().length);                
+                JSONObject j = new JSONObject();
+                j.put("cookie", c.toString());
+                response = j.toJSONString();
+                exchange.sendResponseHeaders(200, response.getBytes().length);
             } else {
-                logger.info( "unsuccessful login from " + username );
+                logger.info("unsuccessful login from " + username);
                 response = "auth failed";
                 exchange.sendResponseHeaders(401, response.getBytes().length);
             }
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());
             os.close();
-
         }
     }
+
 
 }
