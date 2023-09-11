@@ -1,9 +1,14 @@
+/**
+ * Chirpy -- a really basic social networking site
+ * 
+ * Micah Sherr <msherr@cs.georgetown.edu>
+ */
+
 package edu.georgetown;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -16,19 +21,14 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import edu.georgetown.bll.user.AuthService;
 import edu.georgetown.bll.user.UserService;
-import edu.georgetown.dao.User;
 import edu.georgetown.dl.DisplayLogic;
 
-public class WebService {
+public class Chirpy {
 
     final static int PORT = 8080;
     final String DEFAULT_PAGE = "micahtest.thtml";
@@ -36,7 +36,7 @@ public class WebService {
     private Logger logger;
     private DisplayLogic displayLogic;
 
-    public WebService() {
+    public Chirpy() {
         logger = Logger.getLogger("MyLogger");
         try {
             FileHandler fileHandler = new FileHandler("/tmp/log.txt");
@@ -63,7 +63,7 @@ public class WebService {
 
     public static void main(String[] args) {
 
-        WebService ws = new WebService();
+        Chirpy ws = new Chirpy();
         UserService userService = new UserService(ws.logger);
         new AuthService(ws.logger, userService.getUsers());
         ws.startService();
@@ -97,7 +97,9 @@ public class WebService {
             }
 
             displayLogic.display(DEFAULT_PAGE, dataModel, sw);
-            exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
+            
+            exchange.getResponseHeaders().set("Content-Type", "text/html");
+            exchange.sendResponseHeaders(200, (sw.getBuffer().length())); 
             OutputStream os = exchange.getResponseBody();
             os.write(sw.toString().getBytes());
             os.close();
