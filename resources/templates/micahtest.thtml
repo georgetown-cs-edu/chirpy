@@ -8,5 +8,14 @@
         <p>
             Hello.  The dynamically generated date is ${date}.
         </p>
+
+        <p>
+            Here's a list of random numbers:
+            <ul>
+                <#list randvector as randNum>
+                    <li>${randNum}</li>
+                </#list>
+            </ul>
+        </p>
     </body>
 </html>
