@@ -16,7 +16,9 @@ import java.util.logging.SimpleFormatter;
 import com.sun.net.httpserver.HttpServer;
 import edu.georgetown.bll.user.AuthService;
 import edu.georgetown.bll.user.UserService;
+import edu.georgetown.dl.DefaultPageHandler;
 import edu.georgetown.dl.DisplayLogic;
+import edu.georgetown.dl.TestFormHandler;
 
 public class Chirpy {
 
@@ -63,6 +65,7 @@ public class Chirpy {
     private void startService() {
         try {
             HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+            server.createContext("/formtest/", new TestFormHandler(logger, displayLogic));
             server.createContext("/newuser/", new UserService.NewUserHandler());
             server.createContext("/listusers/", new UserService.ListUserHandler());
             server.createContext("/login/", new AuthService.NewLoginHandler());
