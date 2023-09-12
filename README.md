@@ -151,7 +151,17 @@ TODO.
 
 # Using branches
 
-TODO. 
+Each group member should have a separate branch on which they will work.  We are **requiring** that each student work in their own branch and not directly on the `main` branch.  However, once ready, students should switch to `main` and merge in the changes from their individual branches.   
+
+We will deduct points if students do not work in their own branches.  Part of the purpose of this homework is to learn good source code management techniques, including how to effectively use `git`.
+
+As a reminder, students can create a branch by clicking on the bottom-left side in Codespaces where it says "main" (or whatever branch the student is currently using):
+
+![branching](resources/images/branch-symbol.png)
+
+Once clicked, select "Create a branch".
+
+Note that it's very important that students publish their own branches to github.  That is, after committing on your new branch, make sure that select "Publish Branch" under the left-hand source control menu.
 
 
 # Submitting your project
