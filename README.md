@@ -157,11 +157,13 @@ We will deduct points if students do not work in their own branches.  Part of th
 
 As a reminder, students can create a branch by clicking on the bottom-left side in Codespaces where it says "main" (or whatever branch the student is currently using):
 
-![branching](resources/images/branch-symbol.png)
+<img src="resources/images/branch-symbol.png" width="35%" alt="switching branches" />
 
 Once clicked, select "Create a branch".
 
 Note that it's very important that students publish their own branches to github.  That is, after committing on your new branch, make sure that select "Publish Branch" under the left-hand source control menu.
+
+<img src="resources/images/publish-branch.png" width="35%" alt="publishing branch" />
 
 
 # Submitting your project
