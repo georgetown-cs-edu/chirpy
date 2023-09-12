@@ -4,6 +4,7 @@
  * Micah Sherr <msherr@cs.georgetown.edu>
  */
 
+
 package edu.georgetown;
 
 import java.io.IOException;
@@ -52,16 +53,10 @@ public class Chirpy {
 
     }
 
-    public static void main(String[] args) {
 
-        Chirpy ws = new Chirpy();
-        UserService userService = new UserService(ws.logger);
-        new AuthService(ws.logger, userService.getUsers());
-        ws.startService();
-    }
-
-    
-
+    /**
+     * Start the web service
+     */
     private void startService() {
         try {
             HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
@@ -78,5 +73,16 @@ public class Chirpy {
         }
         logger.info("Server started on port " + PORT);
     }
+
+    public static void main(String[] args) {
+
+        Chirpy ws = new Chirpy();
+        UserService userService = new UserService(ws.logger);
+        new AuthService(ws.logger, userService.getUsers());
+        ws.startService();
+    }
+
+    
+
 
 }
