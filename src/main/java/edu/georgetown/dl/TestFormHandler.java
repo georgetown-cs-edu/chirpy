@@ -24,18 +24,23 @@ public class TestFormHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         logger.info("TestFormHandler called");
 
-        byte[] b = exchange.getRequestBody().readAllBytes();
+        // dataModel will hold the data to be used in the template
+        Map<String, Object> dataModel = new HashMap<String, Object>();
 
-        logger.info( "got " + new String(b) );
-        Map<String,String> myMap = DisplayLogic.parseResponse( new String(b) );
-        for (String x : myMap.keySet()) {
-            logger.info( x + " = " + myMap.get(x) );
-        }
+        byte[] b = exchange.getRequestBody().readAllBytes();
+        String formData = new String(b);
+
+        logger.info("got " + formData);
+        Map<String, String> myMap = null;
+        if (!formData.equals("")) {
+            myMap = DisplayLogic.parseResponse(formData);
+            if (myMap.containsKey("username")) {
+                dataModel.put("username", myMap.get("username"));
+            }
+        } 
 
         // sw will hold the output of parsing the template
         StringWriter sw = new StringWriter();
-        // dataModel will hold the data to be used in the template
-        Map<String, Object> dataModel = new HashMap<String, Object>();
 
         // now we call the display method to parse the template and write the output
         displayLogic.parseTemplate(FORM_PAGE, dataModel, sw);

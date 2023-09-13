@@ -1,14 +1,14 @@
 <html>
     <head>
-        <title>This page contains a form.</title>
+        <title>Chirpy Login</title>
     </head>
     <body>
-        <h1>Test Form</h1>
+        <h1>A Really Ugly Login Form</h1>
 
         <p>
             Hello.
-            <#if $username??>
-                Your username is: {$username}
+            <#if username??>
+                Your username is: ${username}
             <#else>
                 You have not entered a username.
             </#if>
