@@ -146,7 +146,10 @@ You may also use outside libraries, with the following conditions.  You must req
 
 # A tour of the skeleton code
 
-TODO.
+The exemplar Chirpy code lives in the `edu.georgetown` package.  You are free to use a different package name if you like.  The BLL, DAO, and DL components are respectively in the packages `edu.georgetown.bll`, `edu.georgetown.dao`, and `edu.georgetown.dl`.  
+
+
+
 
 
 # Using branches
