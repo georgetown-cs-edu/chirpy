@@ -190,7 +190,135 @@ So, to support new paths/contexts/URLs, just add a new class in the [dl](src/mai
 
 ## Templates
 
-OK, let's take a l
+OK, let's take a look at one of these page handlers.  We'll examine the `handle` function of [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java).  Here it is, in its entirety:
+
+```java
+    private final String DEFAULT_PAGE = "toppage.thtml";
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        logger.info("DefaultPageHandler called");
+
+        // sw will hold the output of parsing the template
+        StringWriter sw = new StringWriter();
+        // dataModel will hold the data to be used in the template
+        Map<String, Object> dataModel = new HashMap<String, Object>();
+
+        {
+            // I'm putting this in a code block because it's really just demo
+            // code. We're populating the dataModel with some example data
+            // that's not particularly useful
+
+            // the "date" variable in the template will be set to the current date
+            dataModel.put("date", new Date().toString());
+            // and randvector will be a vector of random doubles (just for illustration)
+            Vector<Double> v = new Vector<Double>();
+            for (int i = 0; i < 10; i++) {
+                v.add(Math.random());
+            }
+            dataModel.put("randvector", v);
+        }
+
+        // now we call the display method to parse the template and write the output
+        displayLogic.parseTemplate(DEFAULT_PAGE, dataModel, sw);
+
+        // set the type of content (in this case, we're sending back HTML)
+        exchange.getResponseHeaders().set("Content-Type", "text/html");
+        // send the HTTP headers
+        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
+        // finally, write the actual response (the contents of the template)
+        OutputStream os = exchange.getResponseBody();
+        os.write(sw.toString().getBytes());
+        os.close();
+    }
+```
+
+The `@Override` thing at the top is a compiler directive.  It indicates that the method is supposed to override a method from a superclass (in this case `HttpHandler`).  If it doesn't, that's a programmer error and the compiler should fail to compile it.  That's another example of "fail early."
+
+In a nutshell, what this function does is that it displays the contents of [toppage.thtml](resources/templates/toppage.thtml).  This file is called a *template*.  Along with all of the other templates (including the ones you'll be adding), it is located in the [resources/templates/](resources/templates/) directory.  Let's take a quick glance at the part of the template, which is mostly HTML.
+
+```html
+        <p>
+            Hello.  It is now ${date}.  Sadly, Chirpy doesn't do much currently.  But you'll fix that!  (Yay!)
+        </p>
+
+        <p>
+            Here's a list of random numbers:
+            <ul>
+                <#list randvector as randNum>
+                    <li>${randNum}</li>
+                </#list>
+            </ul>
+        </p>
+```
+In particular, there's this thing on the second line -- `${date}`.  Anything of the form `${varname}` is a variable which your Chirpy service is going to replace before it sends the HTML back to the user's browser.  In other words, the template defines what the page is going to look like, and parts that are going to be generated *dynamically* by the server are variables.
+
+Let's focus for a second on these two lines from the `handle` function (from above):
+```java
+Map<String, Object> dataModel = new HashMap<String, Object>();
+// [...skipping some stuff...]
+dataModel.put("date", new Date().toString());
+```
+
+The first line defines a Map.  Other languages sometimes call these associative arrays, key-value stores, dictionaries, hash tables, and other names that I'm not thinking off.  The basic concept is simple: you put in a *(key,value)* pair, where *key* and *value* can be pretty much any Java `Object` (i.e., any Java class), and it stays in your dictionary.  You can they query based on the key -- there's a corresponding `get` method that takes the *key* and returns the corresponding *value*.  If you're new to Maps, you should take a quick look [at this tutorial](https://www.w3schools.com/java/java_hashmap.asp).
+
+(As a nit, the above Map call restricts the keys of this particular `dataModel` object to be `String`s.)
+
+Getting back to the lines above, `dataModel.put()` adds a new entry to the `dataModel` hash table, where the key is the string "date" and the value is the current time (which we get via `new Date().toString()`).  Looking back at the template, this is going to cause `${date}` to be replaced with the value in the `dataModel` hash table whose key is `date`.  
+
+Let's look at some more code from the `handle` function:
+```java
+            Vector<Double> v = new Vector<Double>();
+            for (int i = 0; i < 10; i++) {
+                v.add(Math.random());
+            }
+            dataModel.put("randvector", v);
+```
+Here, I'm creating a vector of doubles.  There are 10 of them, and each is a random value.  I then add the vector (as the value) to the hashmap using the key `randvector`.  
+
+Returning to the template, let's look at these lines:
+```html
+            Here's a list of random numbers:
+            <ul>
+                <#list randvector as randNum>
+                    <li>${randNum}</li>
+                </#list>
+            </ul>
+```
+The `<#list randvector as RandNum>` defines an `iterator`, which is a thing that loops through a list.  Specifically, it says, "let's iterate through the list `randvector`. In each iteration, let `randNum` be the next element from the list."  The loop is bookended by the `<#list...>` and `</#list>` tags, as you can see above.  Effectively, the above code will produce a `<li>...</li>` HTML tag (i.e., a list item) for each element of `randvector`.  
+
+Loading the top page from a web browser, we see this all come together:
+
+<img src="resources/images/chirpy-toppage.png" alt="top page for chirpy" />
+
+Let's revisit the `handle` function one more time.  Specifically, let's look at this code block:
+```java
+        // now we call the display method to parse the template and write the output
+        displayLogic.parseTemplate(DEFAULT_PAGE, dataModel, sw);
+
+        // set the type of content (in this case, we're sending back HTML)
+        exchange.getResponseHeaders().set("Content-Type", "text/html");
+        // send the HTTP headers
+        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
+        // finally, write the actual response (the contents of the template)
+        OutputStream os = exchange.getResponseBody();
+        os.write(sw.toString().getBytes());
+        os.close();
+    }
+```
+Each web page handler will have a stanza like this, and you probably don't want to change it.  The `parseTemplate` function does the hard work of parsing the template with the provided `dataModel`.  What you DO want to do is populate the `dataModel` with whatever dynamic content you'll want to display to the user.
+
+The rest of the code above does boilerplate things -- it sends the response code to 200, which signals your web browser that its request to retrieve the page was successful (from the server's point of view).  It then writes the processed template to a buffer which is eventually shipped to the user's browser.  Again, this is code you probably do not want to change.
+
+### I have a headache.  What do I need to do again?
+
+Let's review what you need to do:
+
+* For each new "page" you want to add to Chirpy -- where a page could be the search page, search results page, add a chirp page, etc. -- you'll need to create a new template.  This will mostly be written in HTML, but with template variables thrown in where needed to handle the dynamic content.
+* For each new "page", you'll also need to create a new class and stick it in the [dl](src/main/java/edu/georgetown/dl/) directory.  Specifically, this class should populate a `dataModel` hashmap with whatever dynamic content you need.
+* When your code needs to do something big, like add a user, conduct a search, etc., you should separate out the business logic from the display logic.  The display logic should handle outputting the results to the user.  The business logic should actually perform the action, such as adding a new chirper to the system, or conducting a search (and returning the results).  This latter business logic should be done as classes, which you'll put in the [bll](src/main/java/edu/georgetown/bll/) directory.  (There's a very simple skeleton of a UserService that's there already for you to take a look at.)
+* Don't forget to register the handler in [Chirpy.java](src/main/java/edu/georgetown/Chirpy.java).  You will register it by adding a new `server.createContext(...)` line.
+
 
 # Running Chirpy
 
