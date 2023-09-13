@@ -16,6 +16,13 @@ public class DisplayLogic {
     private Logger logger;
     private Configuration cfg;
 
+    /**
+     * Initializes the display logic. Specifically, it sets up the template engine.
+     * You probably don't want to change much of this code, if any.
+     * 
+     * @param logger the logger to use
+     * @throws IOException
+     */
     public DisplayLogic(Logger logger) throws IOException {
         this.logger = logger;
         /* Create and adjust the configuration singleton */
@@ -32,7 +39,17 @@ public class DisplayLogic {
         this.logger.info("Disply logic initialized");
     }
 
-    public void display(String templateName, Map<String, Object> dataModel, Writer out) {
+    /**
+     * Parses a template given the provided `dataModel`, and writes the output to
+     * `out`. Templates should be stored in the resources/templates directory. You
+     * probably don't want to change this function. See `DefaultPageHandler.java`
+     * for an example of how to use this function.
+     * 
+     * @param templateName the name of the template to use
+     * @param dataModel    the variables to use in the template
+     * @param out          the output stream to write to
+     */
+    public void parseTemplate(String templateName, Map<String, Object> dataModel, Writer out) {
         Template template;
         try {
             template = cfg.getTemplate(templateName);
@@ -52,9 +69,18 @@ public class DisplayLogic {
         }
     }
 
-    // from
-    // https://stackoverflow.com/questions/13592236/parse-a-uri-string-into-name-value-collection
-    public static Map<String, String> parseResponse( String query ) throws UnsupportedEncodingException {
+    /**
+     * This is a helper function which parses the response from a HTML form and puts
+     * the results into a Map. This code was adopted from the code at
+     * https://stackoverflow.com/questions/13592236/parse-a-uri-string-into-name-value-collection.
+     * See `TestFormHandler.java` for an example of how to use this function.
+     * You probably don't want to change this function.
+     * 
+     * @param query the query string to parse
+     * @return the form data as a Map
+     * @throws UnsupportedEncodingException
+     */
+    public static Map<String, String> parseResponse(String query) throws UnsupportedEncodingException {
         Map<String, String> query_pairs = new LinkedHashMap<String, String>();
         String[] pairs = query.split("&");
         for (String pair : pairs) {

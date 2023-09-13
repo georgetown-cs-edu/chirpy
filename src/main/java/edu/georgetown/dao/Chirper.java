@@ -1,5 +1,5 @@
 /**
- * Storage layer for chirpy
+ * A skeleton of a Chirper
  * 
  * Micah Sherr <msherr@cs.georgetown.edu>
  */
@@ -9,20 +9,22 @@ package edu.georgetown.dao;
 import java.io.Serializable;
 import java.util.Vector;
 
-public class User implements Serializable {
+public class Chirper implements Serializable {
     
     private String username;
-    private String name;
     private String password;
+    /** if true, the user's chirps are public */
+    private boolean publicChirps;   
 
-    private Vector<User> followers;
+    /** list of this chirper's followers */
+    private Vector<Chirper> followers;
 
 
-    public User( String username, String name, String password ) {
+    public Chirper( String username, String password ) {
         this.username = username;
-        this.name = name;
         this.password = password;
-        this.followers = new Vector<User>();        
+        this.publicChirps = true;
+        this.followers = new Vector<Chirper>();        
     }
 
     /**
@@ -33,20 +35,16 @@ public class User implements Serializable {
         return this.username;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public boolean checkPassword( String password ) {
         return this.password.equals( password );
     }
 
-    public void addFollower( User follower ) {
-        Users.getLogger().info( "Adding follower " + follower.getUsername() + " to " + this.getUsername() );
-        this.followers.add( follower );
+    public void addFollower( Chirper follower ) {
+        // doesn't do anything.  you should probably change this
+        return;
     }
 
-    public Vector<User> getFollowers() {
+    public Vector<Chirper> getFollowers() {
         return this.followers;
     }
 

@@ -4,7 +4,6 @@
  * Micah Sherr <msherr@cs.georgetown.edu>
  */
 
-
 package edu.georgetown;
 
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import com.sun.net.httpserver.HttpServer;
-import edu.georgetown.bll.user.AuthService;
 import edu.georgetown.bll.user.UserService;
 import edu.georgetown.dl.DefaultPageHandler;
 import edu.georgetown.dl.DisplayLogic;
@@ -53,19 +51,26 @@ public class Chirpy {
 
     }
 
-
     /**
      * Start the web service
      */
     private void startService() {
         try {
+            // initialize the web server
             HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+
+            // each of these "contexts" below indicates a URL path that will be handled by
+            // the service. The top-level path is "/".
             server.createContext("/formtest/", new TestFormHandler(logger, displayLogic));
-            server.createContext("/newuser/", new UserService.NewUserHandler());
-            server.createContext("/listusers/", new UserService.ListUserHandler());
-            server.createContext("/login/", new AuthService.NewLoginHandler());
             server.createContext("/", new DefaultPageHandler(logger, displayLogic));
+            // you will need to add to the above list to add new functionality to the web
+            // service
+
             server.setExecutor(null); // Use the default executor
+
+            // this next line effectively starts the web service and waits for requests. The
+            // above "contexts" (created via `server.createContext`) will be used to handle
+            // the requests.
             server.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,12 +82,11 @@ public class Chirpy {
     public static void main(String[] args) {
 
         Chirpy ws = new Chirpy();
+        // let's start up the various business logic services
         UserService userService = new UserService(ws.logger);
-        new AuthService(ws.logger, userService.getUsers());
+
+        // finally, let's begin the web service so that we can start handling requests
         ws.startService();
     }
-
-    
-
 
 }

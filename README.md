@@ -148,8 +148,69 @@ You may also use outside libraries, with the following conditions.  You must req
 
 The exemplar Chirpy code lives in the `edu.georgetown` package.  You are free to use a different package name if you like.  The BLL, DAO, and DL components are respectively in the packages `edu.georgetown.bll`, `edu.georgetown.dao`, and `edu.georgetown.dl`.  
 
+## public static void main(String[] args)  
 
+Let's start "at the top" and look at the [main](src/main/java/edu/georgetown/Chirpy.java) method from `Chirpy.java`:
 
+```java
+    public static void main(String[] args) {
+
+        Chirpy ws = new Chirpy();
+        // let's start up the various business logic services
+        UserService userService = new UserService(ws.logger);
+
+        // finally, let's begin the web service so that we can start handling requests
+        ws.startService();
+    }
+```
+
+The function initializes the UserService (which doesn't do much... you'll need to fill that in) and then starts the web service.  Let's look at an abridged copy of the `startService` function (again, defined in [Chirpy.java](src/main/java/edu/georgetown/Chirpy.java)):
+
+```java
+    private void startService() {
+        try {
+            // initialize the web server
+            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+
+            // each of these "contexts" below indicates a URL path that will be handled by
+            // the service. The top-level path is "/".
+            server.createContext("/formtest/", new TestFormHandler(logger, displayLogic));
+            server.createContext("/", new DefaultPageHandler(logger, displayLogic));
+            // you will need to add to the above list to add new functionality to the web service
+
+            // [...]
+
+            server.start();
+        } catch (IOException e) {
+          // [...]
+```
+This is the core of Chirpy.  It creates a server object, which is going to handle all of the web server communication for you.  The important part is below, where we have the ability to create `Contexts`, which you can conceptualize as functions that handle specific URLs.  For example, the [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) class handles the URL `https://yourdomainname.com/formtest/`.  Whenever someone navigates to that, the `handle` method of [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) is called.  The default (top) page of a website is "/" -- the [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java) class handles that one.  Both [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) and [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java) are located in the [dl](src/main/java/edu/georgetown/dl/) directory because these are functions that handle the site's display logic.
+
+So, to support new paths/contexts/URLs, just add a new class in the [dl](src/main/java/edu/georgetown/dl/) directory and add a corresponding `server.createContext` call in [startService](src/main/java/edu/georgetown/Chirpy.java).
+
+## Templates
+
+OK, let's take a l
+
+# Running Chirpy
+
+You can run Chirpy from inside your Codespaces environment and access the web service via your web browser.
+
+To run Chirpy, either press F5 when you have `Chirpy.java` open, or select "Start Debugging" from the left-hand side "hamburger" menu.  
+
+To actually access Chirpy using your web browser, you'll need to set up "port forwarding".  To do that, click on the PORTS tab at the bottom of your Codespaces environment:
+
+<img src="resources/images/port-tab.png" alt="picture of ports tab" />
+
+Then, click on "Forward a Port".
+
+Enter `8080` as the port number.  Hit Enter.
+
+You'll see something appear under "Forwarded Address".  That's the URL that you'll need to access Chirpy.  It's dependent on your particular Codespaces environment, and will stop working when Codespaces is shutdown.  It's also hard to type.  If you hover over it with your mouse, a globe icon will pop up.  If you click that, it'll open in your browser.  (Of course, Chirpy should be running first.  If you didn't run it, there's nothing that will "respond" to your web browser.)
+
+<p><img src="resources/images/chirpy-url.png" alt="url button" /></p>
+  
+  
 
 
 # Using branches

@@ -1,3 +1,7 @@
+/**
+ * This file contains the handler for the default (top-level) page.  
+ */
+
 package edu.georgetown.dl;
 
 import java.io.IOException;
@@ -11,11 +15,18 @@ import java.util.logging.Logger;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+// to handle a web request, the class needs to implement the `HttpHandler` interface 
+// and it must contain a method, `handle`, that takes an `HttpExchange` as an argument
 public class DefaultPageHandler implements HttpHandler {
 
-    final String DEFAULT_PAGE = "micahtest.thtml";
     private Logger logger;
     private DisplayLogic displayLogic;
+
+    /**
+     * the template that contains the top page for the Chirpy website. It's located
+     * in the resources/templates/ directory.
+     */
+    private final String DEFAULT_PAGE = "toppage.thtml";
 
     public DefaultPageHandler(Logger log, DisplayLogic dl) {
         logger = log;
@@ -47,7 +58,7 @@ public class DefaultPageHandler implements HttpHandler {
         }
 
         // now we call the display method to parse the template and write the output
-        displayLogic.display(DEFAULT_PAGE, dataModel, sw);
+        displayLogic.parseTemplate(DEFAULT_PAGE, dataModel, sw);
 
         // set the type of content (in this case, we're sending back HTML)
         exchange.getResponseHeaders().set("Content-Type", "text/html");

@@ -1,12 +1,12 @@
 <html>
     <head>
-        <title>Test page</title>
+        <title>Welcome to Chirpy!</title>
     </head>
     <body>
-        <h1>Test Page</h1>
+        <h1>Welcome to Chirpy!</h1>
 
         <p>
-            Hello.  The dynamically generated date is ${date}.
+            Hello.  It is now ${date}.  Sadly, Chirpy doesn't do much currently.  But you'll fix that!  (Yay!)
         </p>
 
         <p>
@@ -16,6 +16,10 @@
                     <li>${randNum}</li>
                 </#list>
             </ul>
+        </p>
+
+        <p>
+            You can also go to the <a href="/formtest/">form test</a> page.
         </p>
     </body>
 </html>
