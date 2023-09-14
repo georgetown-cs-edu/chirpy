@@ -123,7 +123,7 @@ public class DisplayLogic {
     public boolean addCookie(HttpExchange exchange, String var, String val) {
         try {
             exchange.getResponseHeaders().set("Set-Cookie",
-                    var + "=" + URLEncoder.encode(val, "UTF-8"));
+                    var + "=" + URLEncoder.encode(val, "UTF-8") + "; path=/");
         } catch (UnsupportedEncodingException e) {
             logger.warning("UnsupportedEncodingException: " + e.getMessage());
             return false;

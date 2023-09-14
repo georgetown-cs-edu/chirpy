@@ -24,14 +24,15 @@ public class ListCookiesHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         logger.info("ListCookiesHandler called");
 
+        // grab all of the cookies that have been set
+        Map<String, String> cookies = displayLogic.getCookies(exchange);
+
         // dataModel will hold the data to be used in the template
         Map<String, Object> dataModel = new HashMap<String, Object>();
 
         // we don't actually do anything with this, and this line could be removed
         //Map<String, String> dataFromWebForm = displayLogic.parseResponse(exchange);
 
-        // grab all of the cookies that have been set
-        Map<String, String> cookies = displayLogic.getCookies(exchange);
         dataModel.put("cookienames", cookies.keySet());
         dataModel.put("cookievalues", cookies.values());
 
