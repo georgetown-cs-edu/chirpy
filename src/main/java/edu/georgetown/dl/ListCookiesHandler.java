@@ -9,45 +9,41 @@ import java.util.logging.Logger;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-public class TestFormHandler implements HttpHandler {
+public class ListCookiesHandler implements HttpHandler {
 
-    final String FORM_PAGE = "formtest.thtml";
+    final String COOKIELIST_PAGE = "showcookies.thtml";
     private Logger logger;
     private DisplayLogic displayLogic;
 
-    public TestFormHandler(Logger log, DisplayLogic dl) {
+    public ListCookiesHandler(Logger log, DisplayLogic dl) {
         logger = log;
         displayLogic = dl;
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        logger.info("TestFormHandler called");
+        logger.info("ListCookiesHandler called");
 
         // dataModel will hold the data to be used in the template
         Map<String, Object> dataModel = new HashMap<String, Object>();
 
-        Map<String, String> dataFromWebForm = displayLogic.parseResponse(exchange);
+        // we don't actually do anything with this, and this line could be removed
+        //Map<String, String> dataFromWebForm = displayLogic.parseResponse(exchange);
 
-        // if the web form contained a username, add it to the data model
-        if (dataFromWebForm.containsKey("username")) {
-            dataModel.put("username", dataFromWebForm.get("username"));
-        }
+        // grab all of the cookies that have been set
+        Map<String, String> cookies = displayLogic.getCookies(exchange);
+        dataModel.put("cookienames", cookies.keySet());
+        dataModel.put("cookievalues", cookies.values());
 
         // sw will hold the output of parsing the template
         StringWriter sw = new StringWriter();
 
         // now we call the display method to parse the template and write the output
-        displayLogic.parseTemplate(FORM_PAGE, dataModel, sw);
+        displayLogic.parseTemplate(COOKIELIST_PAGE, dataModel, sw);
 
         // set the type of content (in this case, we're sending back HTML)
         exchange.getResponseHeaders().set("Content-Type", "text/html");
         
-        // if we have a username, set a cookie with the username.
-        if (dataFromWebForm.containsKey("username")) {
-            displayLogic.addCookie(exchange, "username", dataFromWebForm.get("username"));
-        }
-
         // send the HTTP headers
         exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
 

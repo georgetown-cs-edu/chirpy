@@ -9,7 +9,10 @@ import freemarker.template.*;
 import java.util.*;
 import java.io.*;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.logging.Logger;
+
+import com.sun.net.httpserver.HttpExchange;
 
 public class DisplayLogic {
 
@@ -80,14 +83,80 @@ public class DisplayLogic {
      * @return the form data as a Map
      * @throws UnsupportedEncodingException
      */
-    public static Map<String, String> parseResponse(String query) throws UnsupportedEncodingException {
-        Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-        String[] pairs = query.split("&");
-        for (String pair : pairs) {
-            int idx = pair.indexOf("=");
-            query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
-                    URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+    public Map<String, String> parseResponse(HttpExchange exchange) {
+        Map<String, String> myMap = new HashMap<String, String>();
+
+        // the data sent via the HTML form ends up in the request body
+        byte[] b;
+        try {
+            b = exchange.getRequestBody().readAllBytes();
+        } catch (IOException e) {
+            logger.warning("Cannot get request body: " + e);
+            return myMap;
         }
-        return query_pairs;
+        String formData = new String(b);
+        if (formData.equals("")) {
+            return myMap;
+        }
+
+        try {
+            String[] pairs = formData.split("&");
+            for (String pair : pairs) {
+                int idx = pair.indexOf("=");
+                myMap.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"),
+                        URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+            }
+        } catch (IOException e) {
+            logger.warning("IOException: " + e.getMessage());
+        }
+        return myMap;
+    }
+
+    /**
+     * Adds a cookie to the response.
+     * 
+     * @param exchange the HttpExchange object representing the current exchange
+     * @param var      the name of the cookie
+     * @param val      the value of the cookie
+     * @return true iff the cookie was set successfully
+     */
+    public boolean addCookie(HttpExchange exchange, String var, String val) {
+        try {
+            exchange.getResponseHeaders().set("Set-Cookie",
+                    var + "=" + URLEncoder.encode(val, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            logger.warning("UnsupportedEncodingException: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gets the value of a cookie from the request.
+     * 
+     * @param exchange the HttpExchange object representing the current exchange
+     * @param var      the name of the cookie
+     * @return the value of the cookie, or null if the cookie is not set
+     */
+    public Map<String, String> getCookies(HttpExchange exchange) {
+        Map<String, String> cookies = new HashMap<String, String>();
+        List<String> cookieList = exchange.getRequestHeaders().get("Cookie");
+        if (cookieList == null) {
+            return cookies;
+        }
+
+        for (String cookieStr : cookieList) {
+            String[] cookiesStr = cookieStr.split(";");
+            for (String cookie : cookiesStr) {
+                String[] parts = cookie.split("=");
+                try {
+                    cookies.put(parts[0], URLDecoder.decode(parts[1], "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    logger.warning("UnsupportedEncodingException: " + e.getMessage());
+                    return null;
+                }
+            }
+        }
+        return cookies;
     }
 }
