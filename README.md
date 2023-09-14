@@ -4,6 +4,9 @@ For the next few homework assignments, you will be incrementally building a Twit
 
 Throughout this document, I'll be using the name Chirpy.  And yes, I know that Twitter is now called $\mathcal{X}$, but I'm just not gonna call it that.  And no, I won't rebrand Chirpy as $\mathcal{C}$.
 
+Super important note: This document won't magically update after you accepted the assignment.  If there are corrections, they won't appear here.  They will appear on [Prof. Sherr's GitHub repository](https://github.com/georgetown-cs-edu/sherr-hw2-chirpy), so be sure to check there frequently.  
+
+
 # A Tour of Chirpy
 
 ## Assignment Goals
@@ -64,11 +67,11 @@ Additionally, your project should support at least one additional functionality:
 
 * Support for uploading images or linking to videos in Chirps.
 
-* Support for interacting with ChatGPT or other large language model chat bots.  (Talk to me if you are attempting this, since it might cost money, and I might be able to cover it.)
+* Support for interacting with ChatGPT or other large language model chat bots.  (Talk to me if you are attempting this, since it might cost money, and the instructor might be able to cover it.)
 
 * Support for secure authentication/login cookies.  (See below.)
 
-* Something clever that I haven't thought of.  This requires TA or instructor approval.
+* **Recommended:** Something clever that the teaching staff hasn't thought of.  This requires TA or instructor approval.
 
 
 ## A Brief Warning
@@ -325,7 +328,6 @@ As mentioned above, you'll need to support [cookies](https://en.wikipedia.org/wi
 
 This means that you'll need some mapping between session cookies and users.  A session cookie could contain a user's username, for example.  **An aside:* Such a design would be HORRIBLY insecure, as any knowledgeable user could change their session cookie to contain another user's username, and thus "become" them without knowing their username and password.  As your "extra" feature, you can look into implementing a more secure cookie design.
 
-TODO: point to URL for latest version of this document.
 
 TODO: revisit deadlines
 
@@ -404,3 +406,17 @@ As with all assignments in this class, you'll be submitting via GitHub.  To shar
 
 This homework assignment is worth 200 points, split evenly between the design document (100 points) and the implementation (also 100 points).
 
+### Design document
+
+Potential deductions include, but are not limited to:
+* -15: incorrect format.  The design document should be saved as a Markdown file and be called DESIGN.md.
+* up to -30: core functionalities are not described.  The design document should describe the mechanisms for each of the major functions of the service, even those that are NOT required for Part II (the implementation).
+* up to -15: omissions in the DAO
+* -15: no mention of how state (e.g., list of users) will be maintained
+* -10: no mention of how cookies are used
+
+### Implementation
+
+Potential deductions include, but are not limited to:
+* up to -50: does not successfully implement required functionality
+* up to -10: failure to adhere to class coding guidelines
