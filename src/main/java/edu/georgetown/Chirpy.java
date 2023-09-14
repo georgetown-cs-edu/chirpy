@@ -28,6 +28,16 @@ public class Chirpy {
     private DisplayLogic displayLogic;
 
     public Chirpy() {
+        /* 
+         * A Logger is a thing that records "log" messages.  This is better
+         * than using System.out.println() because you can control which
+         * messages are logged.  For example, you can log only "warning"
+         * messages, or you can log all messages.
+         * 
+         * We'll create one logger, call it `logger`, and then pass this
+         * logger to our classes.  This way, all of our classes will log
+         * to the same place.
+         */
         logger = Logger.getLogger("MyLogger");
         try {
             FileHandler fileHandler = new FileHandler("/tmp/log.txt");
@@ -39,7 +49,8 @@ public class Chirpy {
         ConsoleHandler consoleHandler = new ConsoleHandler();
         logger.addHandler(consoleHandler);
         logger.setUseParentHandlers(false); // Remove default handlers
-        logger.setLevel(Level.ALL); // Set desired log level (e.g., Level.INFO, Level.WARNING, etc.)
+        // Set desired log level (e.g., Level.INFO, Level.WARNING, etc.)
+        logger.setLevel(Level.ALL); 
 
         try {
             displayLogic = new DisplayLogic(logger);
@@ -84,6 +95,7 @@ public class Chirpy {
     public static void main(String[] args) {
 
         Chirpy ws = new Chirpy();
+
         // let's start up the various business logic services
         UserService userService = new UserService(ws.logger);
 

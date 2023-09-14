@@ -36,6 +36,10 @@ For example, a Chirper named `Micah1` can either search for Chirps from another 
 
 This project is purposefully left somewhat open ended (so that you may exercise your creativity!), and I've tried to keep the requirements minimal.  They are:
 
+* You should work in groups of 3-5.
+
+* You should give your service a name.  You can call it Chirpy if you like, or you can call it something else.  It'd be convenient for us (the teaching staff) if you have a group name (in Canvas) and a service name that are the same.
+
 * Your implementation must implement the logic described in the previous section (i.e., allow Chirps, searching, etc.).
 
 * Anyone can register for an account on Chirpy.  Chirpers have a username and a password.
@@ -56,9 +60,13 @@ Additionally, your project should support at least one additional functionality:
 
 * Support for full-text searching of chirps.
 
+* Incorporate a database-backed backend to persist state.
+
 * Support for uploading images or linking to videos in Chirps.
 
 * Support for interacting with ChatGPT or other large language model chat bots.  (Talk to me if you are attempting this, since it might cost money, and I might be able to cover it.)
+
+* Support for secure authentication/login cookies.  (See below.)
 
 * Something clever that I haven't thought of.  This requires TA or instructor approval.
 
@@ -103,6 +111,7 @@ Your high-level design document should:
   * `List<User> getContacts() // returns this user's contacts`
 * Class descriptions should include the method names (i.e., the API) and brief descriptions of what each does and what the parameters and return values are.
 * Your design document should describe how the various class objects will be stored.  Initially, you may store everything in memory (yikes!) -- e.g., registered users could persist in a [Vector](https://docs.oracle.com/javase/8/docs/api/java/util/Vector.html) or [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html).  Be sure to also describe how a chirper's contacts are stored/maintained.
+* Describe what your cookies look like (see below).
 * Similarly, describe the classes the make up the BLL.  Here, classes will refer to your service's main *functionalities*.  For example, you might have a classes called `SearchFunctionality` and `ChirpHandler`.
 
 The design document should exist as a single Markdown file called `DESIGN.md`, and be stored in the top level of your repository (i.e., next to this `README.md` file).
@@ -310,7 +319,19 @@ Each web page handler will have a stanza like this, and you probably don't want 
 
 The rest of the code above does boilerplate things -- it sends the response code to 200, which signals your web browser that its request to retrieve the page was successful (from the server's point of view).  It then writes the processed template to a buffer which is eventually shipped to the user's browser.  Again, this is code you probably do not want to change.
 
-### I have a headache.  What do I need to do again?
+## Cookies
+
+As mentioned above, you'll need to support [cookies](https://en.wikipedia.org/wiki/HTTP_cookie), which are small pieces of data that the web service (i.e., Chirpy) puts onto the user's browser.  Cookies are needed because you need to maintain *state*.  Consider, for example, a user who logs in via the login page, and then goes to the search page.  The server needs to somehow remember who this user is.  The way that we do this is to send a *session cookie* to the browser.  The browser then sends this session cookie back to the server on every page visit -- this is something automatic that your browser does.  
+
+This means that you'll need some mapping between session cookies and users.  A session cookie could contain a user's username, for example.  **An aside:* Such a design would be HORRIBLY insecure, as any knowledgeable user could change their session cookie to contain another user's username, and thus "become" them without knowing their username and password.  As your "extra" feature, you can look into implementing a more secure cookie design.
+
+TODO: point to URL for latest version of this document.
+
+TODO: revisit deadlines
+
+TODO: add rubric
+
+## I have a headache.  What do I need to do again?
 
 Let's review what you need to do:
 
@@ -358,6 +379,28 @@ Note that it's very important that students publish their own branches to github
 <img src="resources/images/publish-branch.png" width="35%" alt="publishing branch" />
 
 
+# Group dynamics
+
+You and your groupmates should work as a team.  The teaching staff isn't well-positioned to interpret who did what, and you'll all be receiving the same grade for this assignment.
+
+If there are issues with teammates, you should reach out to a member of the teaching staff as soon as possible via **private** message on Ed or through email.
+
+It's up to your group to figure out how to split the work.  A reasonable approach might be:
+
+* Person A: Project manager.  Reviews ALL code and decides what gets added to the `main` branch
+* Person B: Frontend engineer.  Responsible for creating the templates for the various Chirpy pages
+* Person C: Backend developer.  Implements the business logic components for adding users.
+* Person D: Backend developer.  Implements the "extra" requirement for this project.
+
+All group members should work collaboratively on the design document, as it will affect all aspects of this project.
+
+
+
 # Submitting your project
 
 As with all assignments in this class, you'll be submitting via GitHub.  To share with the instructors and the TAs, you should push your code to the `main` branch of your repository.
+
+# Grading rubric
+
+This homework assignment is worth 200 points, split evenly between the design document (100 points) and the implementation (also 100 points).
+
