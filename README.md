@@ -10,7 +10,7 @@ Super important note: This document won't magically update after you accepted th
 
 # When and for how much?
 
-This homework assignment is due **TODO**.
+This homework assignment is due **October 9th** at 11:59pm ET.
 
 It is worth 200 points, with the point values described towards the bottom of this (very long) README.
 
