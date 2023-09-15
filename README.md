@@ -1,10 +1,20 @@
 # chirpy
 
-For the next few homework assignments, you will be incrementally building a Twitter-like service.  I've called my service Chirpy, but you should call yours something different.  Later in the semester, we'll get domain names for each group's service (e.g., chirpyposts.com).
+For the next few homework assignments, you will be incrementally building a Twitter-like service.  We've called our service Chirpy, but you should call yours something different.  Later in the semester, we'll get domain names for each group's service (e.g., chirpyposts.com).
 
-Throughout this document, I'll be using the name Chirpy.  And yes, I know that Twitter is now called $\mathcal{X}$, but I'm just not gonna call it that.  And no, I won't rebrand Chirpy as $\mathcal{C}$.
+Throughout this document, we'll be using the name Chirpy.  And yes, we know that Twitter is now called $\mathcal{X}$, but we're just not gonna call it that.  And no, we won't rebrand Chirpy as $\mathcal{C}$.
 
 Super important note: This document won't magically update after you accepted the assignment.  If there are corrections, they won't appear here.  They will appear on [Prof. Sherr's GitHub repository](https://github.com/georgetown-cs-edu/sherr-hw2-chirpy), so be sure to check there frequently.  
+
+<p> &nbsp; </p>
+
+# When and for how much?
+
+This homework assignment is due **TODO**.
+
+It is worth 200 points, with the point values described towards the bottom of this (very long) README.
+
+<p> &nbsp; </p>
 
 
 # A Tour of Chirpy
@@ -16,7 +26,7 @@ The goal of this assignment is to provide experiential learning in which student
 * design documents;
 * code documentation;
 * adhering to style guidelines;
-* test cases; 
+* test cases (see next homework assignment); 
 * web programming; and
 * source code management, including branching and merging
 
@@ -25,7 +35,7 @@ The goal of this assignment is to provide experiential learning in which student
 
 Chirpy is a Twitter-like service in which users, who are called *chirpers*, can post short messages or *chirps*.  Chirps can contain #hashtags, which are identified as any word that begins with a # symbol.
 
-After logging in, the main screen for Chirpy is the *timeline*, which constitutes the logged-in user's feed.  Populating the timeline are chirps from the logged-in user's *contacts*.  Contacts are fellow Chirpers.  
+After logging in, the main screen for Chirpy is the *timeline*, which constitutes the logged-in chirpers's feed.  Populating the timeline are chirps from the logged-in user's *contacts*.  Contacts are fellow Chirpers.  
 
 There is also a **search functionality**, where a Chirper can either:
 1. type in the name of another Chirper and view that latter Chirper's chirps (unless that latter Chirper's profile is set to private; see note below); or 
@@ -37,7 +47,7 @@ For example, a Chirper named `Micah1` can either search for Chirps from another 
 
 ## Requirements
 
-This project is purposefully left somewhat open ended (so that you may exercise your creativity!), and I've tried to keep the requirements minimal.  They are:
+This project is purposefully left somewhat open ended (so that you may exercise your creativity!), and we've tried to keep the requirements minimal.  They are:
 
 * You should work in groups of 3-5.
 
@@ -67,14 +77,14 @@ Additionally, your project should support at least one additional functionality:
 
 * Support for uploading images or linking to videos in Chirps.
 
-* Support for interacting with ChatGPT or other large language model chat bots.  (Talk to me if you are attempting this, since it might cost money, and the instructor might be able to cover it.)
+* Support for interacting with ChatGPT or other large language model chat bots.  (Talk to Prof. Sherr if you are attempting this, since it might cost money, and the instructor might be able to cover it.)
 
 * Support for secure authentication/login cookies.  (See below.)
 
-* **Recommended:** Something clever that the teaching staff hasn't thought of.  This requires TA or instructor approval.
+* Something clever that the teaching staff hasn't thought of.  This requires TA or instructor approval.
 
 
-## A Brief Warning
+### A Brief Warning
 
 Please don't blindly release your project to the world.  You should probably password protect it with a site-wide password.  (If you do that, you'll need to tell us what it is.)
 
@@ -95,7 +105,9 @@ Chirpy is currently divided into three main packages:
 
 I have written skeleton code for each of these components.  I highly recommend that you start from this code, but you are free to deviate from it if you wish.
 
-## Deliverables, Part I: Writing a high-level design document
+<p>&nbsp;</p>
+
+# Deliverables, Part I: Writing a high-level design document
 
 Your first task in this assignment is to construct a high-level design document for Chirpy (or whatever your group is calling your service).  The design document should be written in [Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).  (Click [here](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) for a good primer on Markdown; also, the file you're reading now is written in Markdown, so see that for a good example.)
 
@@ -106,23 +118,24 @@ Your high-level design document should:
   * submitting a chirp
   * rendering a timeline
   * searching for chirps via hashtag
-  * searching for chirps via chirper
-* Describe the classes that make up the DAO.  Class descriptions should include "public" functions that will be used by the BLL.  For example, a User class might include functions such as:
-  * `void registerNewUser( String username, String password ) throws CannotAddUserException`
-  * `List<User> getRegisteredUsers() // returns list of existing users`
-  * `void addContact( User contact ) // assign contact as a contact of this user`
-  * `List<User> getContacts() // returns this user's contacts`
+  * searching for chirps via chirper (i.e., searching for `MicahSherr1`'s chirps)
+* Describe the classes that make up the DAO.  Class descriptions should include all of the "public" functions that will be used by the BLL.  For example, a User class might include functions such as:
+  * `void setUsername( String username )`
+  * `String getPassword()`
 * Class descriptions should include the method names (i.e., the API) and brief descriptions of what each does and what the parameters and return values are.
 * Your design document should describe how the various class objects will be stored.  Initially, you may store everything in memory (yikes!) -- e.g., registered users could persist in a [Vector](https://docs.oracle.com/javase/8/docs/api/java/util/Vector.html) or [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html).  Be sure to also describe how a chirper's contacts are stored/maintained.
 * Describe what your cookies look like (see below).
-* Similarly, describe the classes the make up the BLL.  Here, classes will refer to your service's main *functionalities*.  For example, you might have a classes called `SearchFunctionality` and `ChirpHandler`.
+* Similarly, describe the classes that make up the BLL.  Here, classes will refer to your service's main *functionalities*.  For example, you might have a classes called `SearchFunctionality` and `ChirpHandler`.
 
 The design document should exist as a single Markdown file called `DESIGN.md`, and be stored in the top level of your repository (i.e., next to this `README.md` file).
 
+<p>&nbsp;</p>
 
-## Deliverables, Part II: The beginnings of Chirpy
+# Deliverables, Part II: The beginnings of Chirpy
 
-The second deliverable for this assignment is a functioning user registration and user listing service.  The requirements are:
+The second (and final) deliverable for this assignment is a functioning user registration and user listing service.  **YOU DO NOT HAVE TO BUILD OTHER COMPONENTS OF CHIRPY FOR THIS ASSIGNMENT.  JUST DO THE USER REGISTRATION AND USER LISTING SERVICES.**
+
+The requirements are:
 
 ### Adding users
 
@@ -136,7 +149,7 @@ Your program should not impose an artificial limit (i.e., hardcode) on the numbe
 
 ### Listing users
 
-Second, to make testing easier for us, you should also enable a URL, say `https://yourdomain/listusers/`, that (as the name implies) lists all of the registered users on the system.
+Second, to make testing easier for us, you should also support a page, say `https://yourdomain/listusers/`, that (as the name implies) lists all of the registered users on the system.
 
 ### Logging in
 
@@ -153,7 +166,7 @@ There's sample code for setting and retrieving cookies.  See below.
 
 Following course policy, you are allowed to use ChatGPT and other large language models for this project.  However, you must identify all cases in which these are used.
 
-You may also use outside libraries, with the following conditions.  You must request the use of the library on Ed Discussion and receive the approval of a TA or the instructor.  And, if given such approval, you should update your design document to reference the library.
+You may also use outside libraries, with the following conditions.  You must request the use of the library on Ed Discussion and receive the approval of a TA or the instructor.  The library must be free, open-source software.  And, you should update your design document to properly cite the library.
 
 
 # A tour of the skeleton code
@@ -272,7 +285,7 @@ Map<String, Object> dataModel = new HashMap<String, Object>();
 dataModel.put("date", new Date().toString());
 ```
 
-The first line defines a Map.  Other languages sometimes call these associative arrays, key-value stores, dictionaries, hash tables, and other names that I'm not thinking off.  The basic concept is simple: you put in a *(key,value)* pair, where *key* and *value* can be pretty much any Java `Object` (i.e., any Java class), and it stays in your dictionary.  You can they query based on the key -- there's a corresponding `get` method that takes the *key* and returns the corresponding *value*.  If you're new to Maps, you should take a quick look [at this tutorial](https://www.w3schools.com/java/java_hashmap.asp).
+The first line defines a Map.  Other languages sometimes call these associative arrays, key-value stores, dictionaries, and hash tables.  The basic concept is simple: you put in a *(key,value)* pair, where *key* and *value* can be pretty much any Java `Object` (i.e., any Java class), and it stays in your dictionary.  You can then query based on the key -- there's a corresponding `get` method that takes the *key* and returns the corresponding *value*.  If you're new to Maps, you should take a quick look [at this tutorial](https://www.w3schools.com/java/java_hashmap.asp).
 
 (As a nit, the above Map call restricts the keys of this particular `dataModel` object to be `String`s.)
 
@@ -286,7 +299,7 @@ Let's look at some more code from the `handle` function:
             }
             dataModel.put("randvector", v);
 ```
-Here, I'm creating a vector of doubles.  There are 10 of them, and each is a random value.  I then add the vector (as the value) to the hashmap using the key `randvector`.  
+Here, we're creating a vector of doubles.  There are 10 of them, and each is a random value.  We then add the vector (as the value) to the hashmap using the key `randvector`.  
 
 Returning to the template, let's look at these lines:
 ```html
@@ -326,12 +339,10 @@ The rest of the code above does boilerplate things -- it sends the response code
 
 As mentioned above, you'll need to support [cookies](https://en.wikipedia.org/wiki/HTTP_cookie), which are small pieces of data that the web service (i.e., Chirpy) puts onto the user's browser.  Cookies are needed because you need to maintain *state*.  Consider, for example, a user who logs in via the login page, and then goes to the search page.  The server needs to somehow remember who this user is.  The way that we do this is to send a *session cookie* to the browser.  The browser then sends this session cookie back to the server on every page visit -- this is something automatic that your browser does.  
 
-This means that you'll need some mapping between session cookies and users.  A session cookie could contain a user's username, for example.  **An aside:* Such a design would be HORRIBLY insecure, as any knowledgeable user could change their session cookie to contain another user's username, and thus "become" them without knowing their username and password.  As your "extra" feature, you can look into implementing a more secure cookie design.
+This means that you'll need some mapping between session cookies and users.  A session cookie could contain a user's username, for example.  *An aside:* Such a design would be HORRIBLY insecure, as any knowledgeable user could change their session cookie to contain another user's username, and thus "become" them without knowing their username and password.  As your "extra" feature, you can look into implementing a more secure cookie design.
 
+For cookies, we're giving you some exemplar code, both for setting and retrieving cookies.  Specifically, look at [ListCookiesHandler.java](src/main/java/edu/georgetown/dl/ListCookiesHandler.java) and [showcookies.thtml](resources/templates/showcookies.thtml).  These respectively define the logic and the layout of the `/listcookies/` (don't forget the trailing `/`) page, which lists the cookies.  Note that the [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) sets the actual cookie by calling the `displayLogic.addCookie()` function.
 
-TODO: revisit deadlines
-
-TODO: add rubric
 
 ## I have a headache.  What do I need to do again?
 
@@ -349,7 +360,7 @@ You can run Chirpy from inside your Codespaces environment and access the web se
 
 To run Chirpy, either press F5 when you have `Chirpy.java` open, or select "Start Debugging" from the left-hand side "hamburger" menu.  
 
-To actually access Chirpy using your web browser, you'll need to set up "port forwarding".  To do that, click on the PORTS tab at the bottom of your Codespaces environment:
+To actually access Chirpy using your web browser, you'll need to set up "port forwarding".  (This is necessary because Chirpy is running inside of a VM located in GitHub's servers; you need to allow outside access to it.)  To do that, click on the PORTS tab at the bottom of your Codespaces environment:
 
 <img src="resources/images/port-tab.png" alt="picture of ports tab" />
 
@@ -361,7 +372,7 @@ You'll see something appear under "Forwarded Address".  That's the URL that you'
 
 <p><img src="resources/images/chirpy-url.png" alt="url button" /></p>
   
-  
+*Note*: The Port Forwarding portion of Codespaces allows you to set it as private (the default) or public.  If it's private, only you (the person logged into GitHub) can access it.  If you want to open it up to the world, set it to public.
 
 
 # Using branches
@@ -380,6 +391,7 @@ Note that it's very important that students publish their own branches to github
 
 <img src="resources/images/publish-branch.png" width="35%" alt="publishing branch" />
 
+<p>&nbsp;</p>
 
 # Group dynamics
 
@@ -419,4 +431,9 @@ Potential deductions include, but are not limited to:
 
 Potential deductions include, but are not limited to:
 * up to -50: does not successfully implement required functionality
-* up to -10: failure to adhere to class coding guidelines
+  * -7: doesn't check that user's password matches during registration
+  * -15: password authentication does not work
+* -40: does not implement "extra" functionality (see above)
+* up to -20: program instability / crashes
+* up to -10: failure to adhere to class code style guidelines
+* -5: frequent use of meaningless commit messages (e.g., "did stuff"); this is bad style
