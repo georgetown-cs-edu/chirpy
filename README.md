@@ -4,7 +4,7 @@ For the next few homework assignments, you will be incrementally building a Twit
 
 Throughout this document, we'll be using the name Chirpy.  And yes, we know that Twitter is now called $\mathcal{X}$, but we're just not gonna call it that.  And no, we won't rebrand Chirpy as $\mathcal{C}$.
 
-Super important note: This document won't magically update after you accepted the assignment.  If there are corrections, they won't appear here.  They will appear on [Prof. Sherr's GitHub repository](https://github.com/georgetown-cs-edu/sherr-hw2-chirpy), so be sure to check there frequently.  
+Super important note: This document won't magically update after you accepted the assignment.  If there are corrections, they won't appear here.  They will appear on [Prof. Sherr's GitHub repository](https://github.com/georgetown-cs-edu/chirpy), so be sure to check there frequently.  
 
 <p> &nbsp; </p>
 
