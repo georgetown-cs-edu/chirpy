@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"edu.georgetown"},{"l":"edu.georgetown.bll.user"},{"l":"edu.georgetown.dao"},{"l":"edu.georgetown.dl"}]
