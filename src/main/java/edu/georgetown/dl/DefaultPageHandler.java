@@ -4,20 +4,17 @@
 
 package edu.georgetown.dl;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Date;
 import java.util.Vector;
 import java.util.logging.Logger;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import io.javalin.http.Context;
 
-// to handle a web request, the class needs to implement the `HttpHandler` interface 
-// and it must contain a method, `handle`, that takes an `HttpExchange` as an argument
-public class DefaultPageHandler implements HttpHandler {
+// to handle a web request, the class provides a `handle` method
+// that takes a Javalin `Context` as an argument
+public class DefaultPageHandler {
 
     private Logger logger;
     private DisplayLogic displayLogic;
@@ -33,8 +30,7 @@ public class DefaultPageHandler implements HttpHandler {
         displayLogic = dl;
     }
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(Context ctx) {
         logger.info("DefaultPageHandler called");
 
         // sw will hold the output of parsing the template
@@ -61,12 +57,7 @@ public class DefaultPageHandler implements HttpHandler {
         displayLogic.parseTemplate(DEFAULT_PAGE, dataModel, sw);
 
         // set the type of content (in this case, we're sending back HTML)
-        exchange.getResponseHeaders().set("Content-Type", "text/html");
-        // send the HTTP headers
-        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
-        // finally, write the actual response (the contents of the template)
-        OutputStream os = exchange.getResponseBody();
-        os.write(sw.toString().getBytes());
-        os.close();
+        ctx.contentType("text/html");
+        ctx.result(sw.toString());
     }
 }

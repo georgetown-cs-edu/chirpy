@@ -1,15 +1,12 @@
 package edu.georgetown.dl;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import io.javalin.http.Context;
 
-public class TestFormHandler implements HttpHandler {
+public class TestFormHandler {
 
     final String FORM_PAGE = "formtest.thtml";
     private Logger logger;
@@ -20,18 +17,18 @@ public class TestFormHandler implements HttpHandler {
         displayLogic = dl;
     }
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(Context ctx) {
         logger.info("TestFormHandler called");
 
         // dataModel will hold the data to be used in the template
         Map<String, Object> dataModel = new HashMap<String, Object>();
 
-        Map<String, String> dataFromWebForm = displayLogic.parseResponse(exchange);
+        // use Javalin's built-in form parameter parsing
+        String username = ctx.formParam("username");
 
         // if the web form contained a username, add it to the data model
-        if (dataFromWebForm.containsKey("username")) {
-            dataModel.put("username", dataFromWebForm.get("username"));
+        if (username != null) {
+            dataModel.put("username", username);
         }
 
         // sw will hold the output of parsing the template
@@ -40,20 +37,13 @@ public class TestFormHandler implements HttpHandler {
         // now we call the display method to parse the template and write the output
         displayLogic.parseTemplate(FORM_PAGE, dataModel, sw);
 
-        // set the type of content (in this case, we're sending back HTML)
-        exchange.getResponseHeaders().set("Content-Type", "text/html");
-        
         // if we have a username, set a cookie with the username.
-        if (dataFromWebForm.containsKey("username")) {
-            displayLogic.addCookie(exchange, "username", dataFromWebForm.get("username"));
+        if (username != null) {
+            displayLogic.addCookie(ctx, "username", username);
         }
 
-        // send the HTTP headers
-        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
-
-        // finally, write the actual response (the contents of the template)
-        OutputStream os = exchange.getResponseBody();
-        os.write(sw.toString().getBytes());
-        os.close();
+        // set the type of content (in this case, we're sending back HTML)
+        ctx.contentType("text/html");
+        ctx.result(sw.toString());
     }
 }
