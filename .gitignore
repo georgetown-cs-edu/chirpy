@@ -1,3 +1,5 @@
+target/
+*.class
 chirpy/target/chirpy-1.0-SNAPSHOT.jar
 chirpy/target/classes/chirpy/src/main/java/edu/georgetown/WebService.class
 chirpy/target/classes/chirpy/src/main/java/edu/georgetown/bll/user/UserService.class

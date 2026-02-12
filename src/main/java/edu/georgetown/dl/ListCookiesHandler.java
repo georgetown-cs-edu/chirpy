@@ -1,15 +1,12 @@
 package edu.georgetown.dl;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
+import io.javalin.http.Context;
 
-public class ListCookiesHandler implements HttpHandler {
+public class ListCookiesHandler {
 
     final String COOKIELIST_PAGE = "showcookies.thtml";
     private Logger logger;
@@ -20,18 +17,14 @@ public class ListCookiesHandler implements HttpHandler {
         displayLogic = dl;
     }
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(Context ctx) {
         logger.info("ListCookiesHandler called");
 
         // grab all of the cookies that have been set
-        Map<String, String> cookies = displayLogic.getCookies(exchange);
+        Map<String, String> cookies = displayLogic.getCookies(ctx);
 
         // dataModel will hold the data to be used in the template
         Map<String, Object> dataModel = new HashMap<String, Object>();
-
-        // we don't actually do anything with this, and this line could be removed
-        //Map<String, String> dataFromWebForm = displayLogic.parseResponse(exchange);
 
         dataModel.put("cookienames", cookies.keySet());
         dataModel.put("cookievalues", cookies.values());
@@ -43,14 +36,7 @@ public class ListCookiesHandler implements HttpHandler {
         displayLogic.parseTemplate(COOKIELIST_PAGE, dataModel, sw);
 
         // set the type of content (in this case, we're sending back HTML)
-        exchange.getResponseHeaders().set("Content-Type", "text/html");
-        
-        // send the HTTP headers
-        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
-
-        // finally, write the actual response (the contents of the template)
-        OutputStream os = exchange.getResponseBody();
-        os.write(sw.toString().getBytes());
-        os.close();
+        ctx.contentType("text/html");
+        ctx.result(sw.toString());
     }
 }

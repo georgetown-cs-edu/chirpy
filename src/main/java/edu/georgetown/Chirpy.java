@@ -7,13 +7,12 @@
 package edu.georgetown;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import com.sun.net.httpserver.HttpServer;
+import io.javalin.Javalin;
 import edu.georgetown.bll.user.UserService;
 import edu.georgetown.dl.DefaultPageHandler;
 import edu.georgetown.dl.DisplayLogic;
@@ -67,28 +66,21 @@ public class Chirpy {
      * Start the web service
      */
     private void startService() {
-        try {
-            // initialize the web server
-            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        Javalin app = Javalin.create().start(PORT);
 
-            // each of these "contexts" below indicates a URL path that will be handled by
-            // the service. The top-level path is "/", and that should be listed last.
-            server.createContext("/formtest/", new TestFormHandler(logger, displayLogic));
-            server.createContext("/listcookies/", new ListCookiesHandler(logger, displayLogic));
-            server.createContext("/", new DefaultPageHandler(logger, displayLogic));
-            // you will need to add to the above list to add new functionality to the web
-            // service.  Just make sure that the handler for "/" is listed last.
+        DefaultPageHandler defaultPageHandler = new DefaultPageHandler(logger, displayLogic);
+        TestFormHandler testFormHandler = new TestFormHandler(logger, displayLogic);
+        ListCookiesHandler listCookiesHandler = new ListCookiesHandler(logger, displayLogic);
 
-            server.setExecutor(null); // Use the default executor
+        // each of these routes below indicates a URL path that will be handled by
+        // the service.
+        app.get("/formtest/", ctx -> testFormHandler.handle(ctx));
+        app.post("/formtest/", ctx -> testFormHandler.handle(ctx));
+        app.get("/listcookies/", ctx -> listCookiesHandler.handle(ctx));
+        app.get("/", ctx -> defaultPageHandler.handle(ctx));
+        // you will need to add to the above list to add new functionality to the web
+        // service.
 
-            // this next line effectively starts the web service and waits for requests. The
-            // above "contexts" (created via `server.createContext`) will be used to handle
-            // the requests.
-            server.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
         logger.info("Server started on port " + PORT);
     }
 
