@@ -193,25 +193,27 @@ The function initializes the UserService (which doesn't do much... you'll need t
 
 ```java
     private void startService() {
-        try {
-            // initialize the web server
-            HttpServer server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        Javalin app = Javalin.create().start(PORT);
 
-            // each of these "contexts" below indicates a URL path that will be handled by
-            // the service. The top-level path is "/".
-            server.createContext("/formtest/", new TestFormHandler(logger, displayLogic));
-            server.createContext("/", new DefaultPageHandler(logger, displayLogic));
-            // you will need to add to the above list to add new functionality to the web service
+        DefaultPageHandler defaultPageHandler = new DefaultPageHandler(logger, displayLogic);
+        TestFormHandler testFormHandler = new TestFormHandler(logger, displayLogic);
+        ListCookiesHandler listCookiesHandler = new ListCookiesHandler(logger, displayLogic);
 
-            // [...]
+        // each of these routes below indicates a URL path that will be handled by
+        // the service.
+        app.get("/formtest/", ctx -> testFormHandler.handle(ctx));
+        app.post("/formtest/", ctx -> testFormHandler.handle(ctx));
+        app.get("/listcookies/", ctx -> listCookiesHandler.handle(ctx));
+        app.get("/", ctx -> defaultPageHandler.handle(ctx));
+        // you will need to add to the above list to add new functionality to the web
+        // service.
 
-            server.start();
-        } catch (IOException e) {
-          // [...]
+        logger.info("Server started on port " + PORT);
+    }
 ```
-This is the core of Chirpy.  It creates a server object, which is going to handle all of the web server communication for you.  The important part is below, where we have the ability to create `Contexts`, which you can conceptualize as functions that handle specific URLs.  For example, the [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) class handles the URL `https://yourdomainname.com/formtest/`.  Whenever someone navigates to that, the `handle` method of [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) is called.  The default (top) page of a website is "/" -- the [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java) class handles that one.  Both [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) and [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java) are located in the [dl](src/main/java/edu/georgetown/dl/) directory because these are functions that handle the site's display logic.
+This is the core of Chirpy.  It creates a Javalin app object, which is going to handle all of the web server communication for you.  The important part is where we register routes, which you can conceptualize as functions that handle specific URLs.  For example, the [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) class handles the URL `https://yourdomainname.com/formtest/`.  Whenever someone navigates to that, the `handle` method of [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) is called.  The default (top) page of a website is "/" -- the [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java) class handles that one.  Both [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) and [DefaultPageHandler](src/main/java/edu/georgetown/dl/DefaultPageHandler.java) are located in the [dl](src/main/java/edu/georgetown/dl/) directory because these are functions that handle the site's display logic.
 
-So, to support new paths/contexts/URLs, just add a new class in the [dl](src/main/java/edu/georgetown/dl/) directory and add a corresponding `server.createContext` call in [startService](src/main/java/edu/georgetown/Chirpy.java).
+So, to support new paths/routes/URLs, just add a new class in the [dl](src/main/java/edu/georgetown/dl/) directory and add a corresponding `app.get` or `app.post` call in [startService](src/main/java/edu/georgetown/Chirpy.java).
 
 ## Templates
 
@@ -220,8 +222,7 @@ OK, let's take a look at one of these page handlers.  We'll examine the `handle`
 ```java
     private final String DEFAULT_PAGE = "toppage.thtml";
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(Context ctx) {
         logger.info("DefaultPageHandler called");
 
         // sw will hold the output of parsing the template
@@ -248,19 +249,12 @@ OK, let's take a look at one of these page handlers.  We'll examine the `handle`
         displayLogic.parseTemplate(DEFAULT_PAGE, dataModel, sw);
 
         // set the type of content (in this case, we're sending back HTML)
-        exchange.getResponseHeaders().set("Content-Type", "text/html");
-        // send the HTTP headers
-        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
-        // finally, write the actual response (the contents of the template)
-        OutputStream os = exchange.getResponseBody();
-        os.write(sw.toString().getBytes());
-        os.close();
+        ctx.contentType("text/html");
+        ctx.result(sw.toString());
     }
 ```
 
-The `@Override` thing at the top is a compiler directive.  It indicates that the method is supposed to override a method from a superclass (in this case `HttpHandler`).  If it doesn't, that's a programmer error and the compiler should fail to compile it.  That's another example of "fail early."
-
-In a nutshell, what this function does is that it displays the contents of [toppage.thtml](resources/templates/toppage.thtml).  This file is called a *template*.  Along with all of the other templates (including the ones you'll be adding), it is located in the [resources/templates/](resources/templates/) directory.  Let's take a quick glance at the part of the template, which is mostly HTML.
+In a nutshell, what this function does is that it displays the contents of [toppage.thtml](resources/templates/toppage.thtml).  This file is called a *template*.  Along with all of the other templates (including the ones you'll be adding), it is located in the [resources/templates/](resources/templates/) directory.  The `handle` method takes a Javalin `Context` object (called `ctx`) as a parameter, which provides access to the HTTP request and response.  Let's take a quick glance at part of the template, which is mostly HTML.
 
 ```html
         <p>
@@ -322,18 +316,13 @@ Let's revisit the `handle` function one more time.  Specifically, let's look at 
         displayLogic.parseTemplate(DEFAULT_PAGE, dataModel, sw);
 
         // set the type of content (in this case, we're sending back HTML)
-        exchange.getResponseHeaders().set("Content-Type", "text/html");
-        // send the HTTP headers
-        exchange.sendResponseHeaders(200, (sw.getBuffer().length()));
-        // finally, write the actual response (the contents of the template)
-        OutputStream os = exchange.getResponseBody();
-        os.write(sw.toString().getBytes());
-        os.close();
+        ctx.contentType("text/html");
+        ctx.result(sw.toString());
     }
 ```
 Each web page handler will have a stanza like this, and you probably don't want to change it.  The `parseTemplate` function does the hard work of parsing the template with the provided `dataModel`.  What you DO want to do is populate the `dataModel` with whatever dynamic content you'll want to display to the user.
 
-The rest of the code above does boilerplate things -- it sends the response code to 200, which signals your web browser that its request to retrieve the page was successful (from the server's point of view).  It then writes the processed template to a buffer which is eventually shipped to the user's browser.  Again, this is code you probably do not want to change.
+The rest of the code above does boilerplate things -- `ctx.contentType("text/html")` sets the content type header to indicate we're sending HTML, and `ctx.result(sw.toString())` sends the processed template as the response body.  Javalin automatically sends a 200 response code, which signals your web browser that its request to retrieve the page was successful.  Again, this is code you probably do not want to change.
 
 ## Cookies
 
@@ -341,7 +330,7 @@ As mentioned above, you'll need to support [cookies](https://en.wikipedia.org/wi
 
 This means that you'll need some mapping between session cookies and users.  A session cookie could contain a user's username, for example.  *An aside:* Such a design would be HORRIBLY insecure, as any knowledgeable user could change their session cookie to contain another user's username, and thus "become" them without knowing their username and password.  As your "extra" feature, you can look into implementing a more secure cookie design.
 
-For cookies, we're giving you some exemplar code, both for setting and retrieving cookies.  Specifically, look at [ListCookiesHandler.java](src/main/java/edu/georgetown/dl/ListCookiesHandler.java) and [showcookies.thtml](resources/templates/showcookies.thtml).  These respectively define the logic and the layout of the `/listcookies/` (don't forget the trailing `/`) page, which lists the cookies.  Note that the [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) sets the actual cookie by calling the `displayLogic.addCookie()` function.
+For cookies, we're giving you some exemplar code, both for setting and retrieving cookies.  Specifically, look at [ListCookiesHandler.java](src/main/java/edu/georgetown/dl/ListCookiesHandler.java) and [showcookies.thtml](resources/templates/showcookies.thtml).  These respectively define the logic and the layout of the `/listcookies/` (don't forget the trailing `/`) page, which lists the cookies.  Note that the [TestFormHandler](src/main/java/edu/georgetown/dl/TestFormHandler.java) sets the actual cookie by calling the `displayLogic.addCookie()` function, which internally uses Javalin's `ctx.cookie()` method.
 
 
 ## I have a headache.  What do I need to do again?
@@ -349,9 +338,9 @@ For cookies, we're giving you some exemplar code, both for setting and retrievin
 Let's review what you need to do:
 
 * For each new "page" you want to add to Chirpy -- where a page could be the search page, search results page, add a chirp page, etc. -- you'll need to create a new template.  This will mostly be written in HTML, but with template variables thrown in where needed to handle the dynamic content.
-* For each new "page", you'll also need to create a new class and stick it in the [dl](src/main/java/edu/georgetown/dl/) directory.  Specifically, this class should populate a `dataModel` hashmap with whatever dynamic content you need.
+* For each new "page", you'll also need to create a new class and stick it in the [dl](src/main/java/edu/georgetown/dl/) directory.  Specifically, this class should have a `handle(Context ctx)` method that populates a `dataModel` hashmap with whatever dynamic content you need.
 * When your code needs to do something big, like add a user, conduct a search, etc., you should separate out the business logic from the display logic.  The display logic should handle outputting the results to the user.  The business logic should actually perform the action, such as adding a new chirper to the system, or conducting a search (and returning the results).  This latter business logic should be done as classes, which you'll put in the [bll](src/main/java/edu/georgetown/bll/) directory.  (There's a very simple skeleton of a UserService that's there already for you to take a look at.)
-* Don't forget to register the handler in [Chirpy.java](src/main/java/edu/georgetown/Chirpy.java).  You will register it by adding a new `server.createContext(...)` line.
+* Don't forget to register the handler in [Chirpy.java](src/main/java/edu/georgetown/Chirpy.java).  You will register it by adding a new `app.get(...)` or `app.post(...)` line in the `startService` method.
 
 
 # Running Chirpy
