@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <title>Welcome to Chirpy!</title>
+    </head>
+    <body>
+        <h1>Welcome to Chirpy!</h1>
+
+        <p>
+            Here are the users:
+        </p>
+
+        <p>
+            <ul>
+                <#list users as user>
+                    <li>${randNum}</li>
+                </#list>
+            </ul>
+        </p>
+
+        <p>
+            You can also go to the <a href="/formtest/">form test</a> page or <a href="/listcookies/">this page</a> which lists the cookies.
+        </p>
+    </body>
+</html>

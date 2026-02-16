@@ -7,11 +7,14 @@
 package edu.georgetown;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import io.javalin.Javalin;
 import edu.georgetown.bll.user.UserService;
 import edu.georgetown.dl.DefaultPageHandler;
@@ -38,15 +41,28 @@ public class Chirpy {
          * to the same place.
          */
         logger = Logger.getLogger("MyLogger");
+        Formatter logFormatter = new Formatter() {
+            private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            @Override
+            public String format(java.util.logging.LogRecord record) {
+                String timestamp = Instant.ofEpochMilli(record.getMillis())
+                        .atZone(ZoneId.systemDefault())
+                        .format(dateFormatter);
+                return String.format("%s %s %s%n", timestamp, record.getLevel().getName(), formatMessage(record));
+            }
+        };
+
         try {
             FileHandler fileHandler = new FileHandler("/tmp/log.txt");
             logger.addHandler(fileHandler);
-            fileHandler.setFormatter(new SimpleFormatter());
+            fileHandler.setFormatter(logFormatter);
         } catch (IOException e) {
             e.printStackTrace();
         }
         ConsoleHandler consoleHandler = new ConsoleHandler();
         logger.addHandler(consoleHandler);
+        consoleHandler.setFormatter(logFormatter);
         logger.setUseParentHandlers(false); // Remove default handlers
         // Set desired log level (e.g., Level.INFO, Level.WARNING, etc.)
         logger.setLevel(Level.ALL); 
