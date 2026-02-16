@@ -64,6 +64,7 @@ This project is purposefully left somewhat open ended (so that you may exercise 
 
 * Your instantiation of Chirpy should save state.  This can be done either via a database (I recommend using [SQLite](https://www.sqlitetutorial.net/sqlite-java/)) or file I/O.  In short, when you restart Chirpy, the users, posts, etc. should all still exist.   
 
+<mark>**Important note:**</mark> Some of these features/requirements are due for HW4 (the next homework).  Read the section on [Deliverables](#deliverables-part-i-writing-a-high-level-design-document) for what's due when.
 
 ## Extra Features
 
@@ -131,7 +132,7 @@ The design document should exist as a single Markdown file called `DESIGN.md`, a
 
 # Deliverables, Part II: The beginnings of Chirpy
 
-The second (and final) deliverable for this assignment is a functioning user registration and user listing service.  **YOU DO NOT HAVE TO BUILD OTHER COMPONENTS OF CHIRPY FOR THIS ASSIGNMENT.  JUST DO THE USER REGISTRATION AND USER LISTING SERVICES.**
+The second (and final) deliverable for this assignment is a functioning user registration and user listing service.  <mark>**YOU DO NOT HAVE TO BUILD OTHER COMPONENTS OF CHIRPY FOR THIS ASSIGNMENT.  JUST DO THE USER REGISTRATION AND USER LISTING SERVICES.**</mark>
 
 The requirements are:
 
