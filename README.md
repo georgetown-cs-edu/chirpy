@@ -1,16 +1,15 @@
 # chirpy
 
-For the next few homework assignments, you will be incrementally building a Twitter-like service.  We've called our service Chirpy, but you should call yours something different.  Later in the semester, we'll get domain names for each group's service (e.g., chirpyposts.com).
+For the next two homework assignments, you will be incrementally building a Bluesky-like service.  We've called our service Chirpy, but you should call yours something different.  Later in the semester, we'll get domain names for each group's service (e.g., chirpyposts.com).
 
-Throughout this document, we'll be using the name Chirpy.  And yes, we know that Twitter is now called $\mathcal{X}$, but we're just not gonna call it that.  And no, we won't rebrand Chirpy as $\mathcal{C}$.
+Throughout this document, we'll be using the name Chirpy.  
 
-Super important note: This document won't magically update after you accepted the assignment.  If there are corrections, they won't appear here.  They will appear on [Prof. Sherr's GitHub repository](https://github.com/georgetown-cs-edu/chirpy), so be sure to check there frequently.  
 
 <p> &nbsp; </p>
 
 # When and for how much?
 
-This homework assignment is due **October 9th** at 11:59pm ET.
+This homework assignment is due **March 12th** at 11:59pm ET.
 
 It is worth 200 points, with the point values described towards the bottom of this (very long) README.
 
@@ -33,7 +32,7 @@ The goal of this assignment is to provide experiential learning in which student
 
 ## What is Chirpy?
 
-Chirpy is a Twitter-like service in which users, who are called *chirpers*, can post short messages or *chirps*.  Chirps can contain #hashtags, which are identified as any word that begins with a # symbol.
+Chirpy is a Bluesky-like service in which users, who are called *chirpers*, can post short messages or *chirps*.  Chirps can contain #hashtags, which are identified as any word that begins with a # symbol.
 
 After logging in, the main screen for Chirpy is the *timeline*, which constitutes the logged-in chirpers's feed.  Populating the timeline are chirps from the logged-in user's *contacts*.  Contacts are fellow Chirpers.  
 
@@ -41,7 +40,7 @@ There is also a **search functionality**, where a Chirper can either:
 1. type in the name of another Chirper and view that latter Chirper's chirps (unless that latter Chirper's profile is set to private; see note below); or 
 2. search for posts that contain a given hashtag.
 
-For example, a Chirper named `Micah1` can either search for Chirps from another Chirper, say, `DeGioia`, or for a hashtag, say, `#Georgetown`.
+For example, a Chirper named `Micah1` can either search for Chirps from another Chirper, say, `Groves`, or for a hashtag, say, `#Georgetown`.
 
 
 
@@ -63,6 +62,7 @@ This project is purposefully left somewhat open ended (so that you may exercise 
 
 * You can specify a maximum length for Chirps, but it must be at least 128 characters.
 
+* Your instantiation of Chirpy should save state.  This can be done either via a database (I recommend using [SQLite](https://www.sqlitetutorial.net/sqlite-java/)) or file I/O.  In short, when you restart Chirpy, the users, posts, etc. should all still exist.   
 
 
 ## Extra Features
@@ -73,11 +73,9 @@ Additionally, your project should support at least one additional functionality:
 
 * Support for full-text searching of chirps.
 
-* Incorporate a database-backed backend to persist state.
-
 * Support for uploading images or linking to videos in Chirps.
 
-* Support for interacting with ChatGPT or other large language model chat bots.  (Talk to Prof. Sherr if you are attempting this, since it might cost money, and the instructor might be able to cover it.)
+* Support for interacting with Gemini, ChatGPT or other large language model chat bots.  (Talk to Prof. Sherr if you are attempting this, since it might cost money, and the instructor might be able to cover it.)
 
 * Support for secure authentication/login cookies.  (See below.)
 
@@ -123,7 +121,7 @@ Your high-level design document should:
   * `void setUsername( String username )`
   * `String getPassword()`
 * Class descriptions should include the method names (i.e., the API) and brief descriptions of what each does and what the parameters and return values are.
-* Your design document should describe how the various class objects will be stored.  Initially, you may store everything in memory (yikes!) -- e.g., registered users could persist in a [Vector](https://docs.oracle.com/javase/8/docs/api/java/util/Vector.html) or [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html).  Be sure to also describe how a chirper's contacts are stored/maintained.
+* Your design document should describe how the various class objects will be stored.  Initially, you may store everything in memory (yikes!) -- e.g., registered users could persist in a [Vector](https://docs.oracle.com/javase/8/docs/api/java/util/Vector.html) or [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html).  Be sure to also describe how a chirper's contacts are stored/maintained.  You'll want to also describe how you will maintain state in a database or file (or something else) so that data persists across program restarts.
 * Describe what your cookies look like (see below).
 * Similarly, describe the classes that make up the BLL.  Here, classes will refer to your service's main *functionalities*.  For example, you might have a classes called `SearchFunctionality` and `ChirpHandler`.
 
@@ -143,13 +141,17 @@ Your service should allow a user to navigate to `https://yourdomain/register/` a
 
 The registration form should, at a minimum, ask the user for a username, password, and ***password confirmation*** (i.e., they need to enter their password twice).  Your code should check that the two passwords match and that the user doesn't already exist -- and alert the user if either condition applies.
 
-Assuming the passwords match and this is a new registration, your service should then "create" the new user.  What "create" means is up to you, but it should at minimum mean that there's some instantiation of this user that is kept in memory.
+Assuming the passwords match and this is a new registration, your service should then "create" the new user.  What "create" means is up to you, but it should at minimum mean that there's some instantiation of this user that is kept in memory and saved to disk/database.
 
 Your program should not impose an artificial limit (i.e., hardcode) on the number of users that may register.  If storing user information in memory, you should use a dynamic data structure such as a [Vector](https://docs.oracle.com/javase/8/docs/api/java/util/Vector.html) or [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html).
+
+As mentioned above, data must persist across Chirpy restarts.  That means that you'll need to be able to save and restore users from either disk or a database.
+
 
 ### Listing users
 
 Second, to make testing easier for us, you should also support a page, say `https://yourdomain/listusers/`, that (as the name implies) lists all of the registered users on the system.
+
 
 ### Logging in
 
@@ -165,6 +167,8 @@ There's sample code for setting and retrieving cookies.  See below.
 ## Outside resources
 
 Following course policy, you are allowed to use ChatGPT and other large language models for this project.  However, you must identify all cases in which these are used.
+
+A reasonable way to use ChatGPT/Gemini/Claude is to make Chirpy more visually appealing.  We won't grade for aesthetics, but it's nice to be able to produce something that...well...looks nice.
 
 You may also use outside libraries, with the following conditions.  You must request the use of the library on Ed Discussion and receive the approval of a TA or the instructor.  The library must be free, open-source software.  And, you should update your design document to properly cite the library.
 
@@ -366,7 +370,7 @@ You'll see something appear under "Forwarded Address".  That's the URL that you'
 
 # Using branches
 
-Each group member should have a separate branch on which they will work.  We are **requiring** that each student work in their own branch and not directly on the `main` branch.  However, once ready, students should switch to `main` and merge in the changes from their individual branches.   
+<mark>Each group member should have a separate branch on which they will work.</mark>  We are **requiring** that each student work in their own branch and not directly on the `main` branch.  However, once ready, students should switch to `main` and merge in the changes from their individual branches.   
 
 We will deduct points if students do not work in their own branches.  Part of the purpose of this homework is to learn good source code management techniques, including how to effectively use `git`.
 
@@ -390,10 +394,11 @@ If there are issues with teammates, you should reach out to a member of the teac
 
 It's up to your group to figure out how to split the work.  A reasonable approach might be:
 
-* Person A: Project manager.  Reviews ALL code and decides what gets added to the `main` branch
-* Person B: Frontend engineer.  Responsible for creating the templates for the various Chirpy pages
+* Person A: Project manager.  Reviews ALL code and decides what gets added to the `main` branch.
+* Person B: Frontend engineer.  Responsible for creating the templates for the various Chirpy pages.
 * Person C: Backend developer.  Implements the business logic components for adding users.
 * Person D: Backend developer.  Implements the "extra" requirement for this project.
+* Person E: Persistence manager. Figures out how to save program state (users, posts, etc.) to some stable storage (e.g., a database) and retrieve it.
 
 All group members should work collaboratively on the design document, as it will affect all aspects of this project.
 
@@ -415,6 +420,7 @@ Potential deductions include, but are not limited to:
 * up to -15: omissions in the DAO
 * -15: no mention of how state (e.g., list of users) will be maintained
 * -10: no mention of how cookies are used
+* -15: no description of how persistent state will be achieved
 
 ### Implementation
 
@@ -422,6 +428,7 @@ Potential deductions include, but are not limited to:
 * up to -50: does not successfully implement required functionality
   * -7: doesn't check that user's password matches during registration
   * -15: password authentication does not work
+  * -20: doesn't persist state to database or other persistent storage (e.g., files)
 * -40: does not implement "extra" functionality (see above)
 * up to -20: program instability / crashes
 * up to -10: failure to adhere to class code style guidelines
